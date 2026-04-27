@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>大模型翻译场景术语使用效果专项调研报告</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+  :root {
+    --ink: #1a1a2e;
+    --deep: #16213e;
+    --accent: #0f3460;
+    --gold: #c9a84c;
+    --gold-light: #f0d080;
+    --red: #c0392b;
+    --green: #1e8449;
+    --blue: #1a5276;
+    --muted: #5d6d7e;
+    --rule: #d5d8dc;
+    --bg: #fafaf8;
+    --card: #ffffff;
+    --warn: #f39c12;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans SC', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  /* ── COVER ── */
+  .cover {
+    background: linear-gradient(160deg, var(--deep) 0%, var(--accent) 60%, #1a3a5c 100%);
+    color: white;
+    padding: 80px 60px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute; top: -80px; right: -80px;
+    width: 400px; height: 400px;
+    border: 2px solid rgba(201,168,76,0.25);
+    border-radius: 50%;
+  }
+  .cover::after {
+    content: '';
+    position: absolute; top: 20px; right: 20px;
+    width: 200px; height: 200px;
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 50%;
+  }
+  .cover-label {
+    font-size: 11px; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--gold-light); margin-bottom: 24px; font-weight: 300;
+  }
+  .cover-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 32px; font-weight: 700; line-height: 1.4;
+    margin-bottom: 16px; max-width: 600px;
+  }
+  .cover-subtitle {
+    font-size: 16px; color: rgba(255,255,255,0.75);
+    margin-bottom: 48px; font-weight: 300;
+  }
+  .cover-meta {
+    display: flex; gap: 40px; flex-wrap: wrap;
+  }
+  .cover-meta-item { font-size: 12px; }
+  .cover-meta-item .label { color: var(--gold-light); text-transform: uppercase; letter-spacing: 2px; font-size: 10px; margin-bottom: 4px; }
+  .cover-meta-item .value { color: white; font-weight: 500; }
+
+  /* ── LAYOUT ── */
+  .body-wrap { max-width: 1100px; margin: 0 auto; padding: 0 40px 80px; }
+
+  /* ── SECTIONS ── */
+  .section { margin-top: 56px; }
+  .section-header {
+    display: flex; align-items: center; gap: 16px;
+    border-bottom: 2px solid var(--accent); padding-bottom: 10px;
+    margin-bottom: 28px;
+  }
+  .section-num {
+    background: var(--accent); color: white;
+    font-size: 11px; font-weight: 700; letter-spacing: 1px;
+    padding: 4px 10px; border-radius: 2px;
+  }
+  .section-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 20px; font-weight: 700; color: var(--deep);
+  }
+
+  .subsection { margin-top: 36px; }
+  .subsection-title {
+    font-size: 15px; font-weight: 700; color: var(--accent);
+    border-left: 3px solid var(--gold); padding-left: 10px;
+    margin-bottom: 16px;
+  }
+
+  p { margin-bottom: 12px; color: #2c3e50; }
+  strong { color: var(--ink); }
+
+  /* ── KPI CARDS ── */
+  .kpi-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 28px; }
+  .kpi-card {
+    background: var(--card); border: 1px solid var(--rule);
+    border-radius: 6px; padding: 20px 16px; text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .kpi-num { font-size: 32px; font-weight: 700; font-family: 'Noto Serif SC', serif; }
+  .kpi-num.gold { color: var(--gold); }
+  .kpi-num.blue { color: var(--blue); }
+  .kpi-num.green { color: var(--green); }
+  .kpi-num.red { color: var(--red); }
+  .kpi-label { font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
+  .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 6px; }
+
+  /* ── TABLES ── */
+  .table-wrap { overflow-x: auto; margin: 16px 0 24px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead tr { background: var(--deep); color: white; }
+  thead th { padding: 10px 12px; text-align: left; font-weight: 500; letter-spacing: 0.5px; white-space: nowrap; }
+  tbody tr:nth-child(even) { background: #f5f6fa; }
+  tbody tr:hover { background: #eaf0fb; }
+  td { padding: 9px 12px; border-bottom: 1px solid #eaecee; vertical-align: top; }
+  td.num { text-align: right; font-weight: 600; }
+  td.center { text-align: center; }
+  .tag { display: inline-block; font-size: 10px; padding: 2px 6px; border-radius: 2px; font-weight: 600; }
+  .tag-green { background: #d5f5e3; color: var(--green); }
+  .tag-red { background: #fadbd8; color: var(--red); }
+  .tag-orange { background: #fdebd0; color: #e67e22; }
+  .tag-blue { background: #d6eaf8; color: var(--blue); }
+
+  /* ── COMPARISON BAR ── */
+  .bar-row { display: flex; align-items: center; gap: 8px; margin: 4px 0; font-size: 12px; }
+  .bar-wrap { flex: 1; background: #eee; border-radius: 2px; height: 8px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 2px; }
+  .bar-fill.new { background: var(--accent); }
+  .bar-fill.old { background: #aab7c4; }
+  .bar-label { width: 60px; color: var(--muted); }
+  .bar-val { width: 36px; text-align: right; font-weight: 600; }
+
+  /* ── CALLOUT BOXES ── */
+  .callout { border-radius: 4px; padding: 16px 20px; margin: 16px 0; font-size: 13px; }
+  .callout-info { background: #eaf4fb; border-left: 4px solid #2e86c1; }
+  .callout-warn { background: #fef9e7; border-left: 4px solid var(--warn); }
+  .callout-danger { background: #fdedec; border-left: 4px solid var(--red); }
+  .callout-success { background: #eafaf1; border-left: 4px solid var(--green); }
+  .callout-title { font-weight: 700; margin-bottom: 6px; }
+
+  /* ── TERM GLOSSARY ── */
+  .glossary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .glossary-card {
+    background: white; border: 1px solid var(--rule);
+    border-radius: 5px; padding: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .glossary-card-header {
+    font-size: 12px; font-weight: 700; letter-spacing: 1px;
+    color: var(--accent); text-transform: uppercase;
+    border-bottom: 1px solid var(--rule); padding-bottom: 8px; margin-bottom: 10px;
+  }
+  .glossary-item { display: flex; gap: 8px; margin-bottom: 5px; font-size: 12px; line-height: 1.6; }
+  .glossary-src { color: var(--ink); font-weight: 500; min-width: 90px; flex-shrink: 0; }
+  .glossary-tgt { color: var(--muted); }
+  .glossary-badge { font-size: 9px; padding: 1px 5px; border-radius: 2px; font-weight: 600; margin-left: 4px; vertical-align: middle; }
+  .badge-miss { background: #fadbd8; color: var(--red); }
+  .badge-wrong { background: #fdebd0; color: #e67e22; }
+  .badge-ok { background: #d5f5e3; color: var(--green); }
+
+  /* ── SCORE GRID ── */
+  .score-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 10px; margin: 12px 0; }
+  .score-cell { text-align: center; }
+  .score-circle {
+    width: 48px; height: 48px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px; margin: 0 auto 4px;
+  }
+  .sc-high { background: #d5f5e3; color: var(--green); }
+  .sc-mid  { background: #fef9e7; color: #b7770d; }
+  .sc-low  { background: #fadbd8; color: var(--red); }
+  .score-dim { font-size: 10px; color: var(--muted); line-height: 1.3; }
+
+  /* ── CONCLUSION BOX ── */
+  .conclusion-box {
+    background: linear-gradient(135deg, var(--deep), var(--accent));
+    color: white; border-radius: 6px; padding: 28px 32px; margin-top: 32px;
+  }
+  .conclusion-box h3 { font-family: 'Noto Serif SC', serif; font-size: 17px; margin-bottom: 16px; color: var(--gold-light); }
+  .conclusion-item { display: flex; gap: 12px; margin-bottom: 14px; font-size: 13px; line-height: 1.7; }
+  .conclusion-num { background: var(--gold); color: var(--deep); font-weight: 700; font-size: 11px; padding: 2px 7px; border-radius: 2px; flex-shrink: 0; height: fit-content; margin-top: 3px; }
+
+  /* ── TOC ── */
+  .toc { background: white; border: 1px solid var(--rule); border-radius: 5px; padding: 24px 28px; margin: 32px 0; }
+  .toc-title { font-weight: 700; font-size: 13px; color: var(--accent); margin-bottom: 14px; letter-spacing: 1px; }
+  .toc-item { display: flex; gap: 10px; padding: 5px 0; border-bottom: 1px dotted #ddd; font-size: 13px; }
+  .toc-item:last-child { border: none; }
+  .toc-num { color: var(--gold); font-weight: 700; min-width: 24px; }
+  .toc-text { color: var(--deep); }
+
+  /* ── FOOTER ── */
+  .footer { margin-top: 60px; padding: 20px 40px; border-top: 1px solid var(--rule); font-size: 11px; color: var(--muted); display: flex; justify-content: space-between; }
+
+  /* ── PAGE BREAK ── */
+  .page-break { border: none; border-top: 2px dashed var(--rule); margin: 48px 0; }
+
+  /* ── DETAIL CASE CARD ── */
+  .case-card {
+    background: white; border: 1px solid var(--rule); border-radius: 6px;
+    margin-bottom: 24px; overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .case-card-header {
+    background: var(--deep); color: white;
+    padding: 12px 20px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .case-card-title { font-weight: 700; font-size: 14px; }
+  .case-card-domain { font-size: 11px; color: rgba(255,255,255,0.65); }
+  .case-card-body { padding: 16px 20px; }
+  .metric-row { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 12px; }
+  .metric-item { font-size: 12px; }
+  .metric-item .m-label { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
+  .metric-item .m-value { font-weight: 700; font-size: 16px; }
+  .metric-item .m-value.good { color: var(--green); }
+  .metric-item .m-value.warn { color: var(--warn); }
+  .metric-item .m-value.bad { color: var(--red); }
+</style>
+</head>
+<body>
+
+<!-- ══════════ COVER ══════════ -->
+<div class="cover">
+  <div class="cover-label">专项调研报告 · 2026</div>
+  <div class="cover-title">大模型翻译场景<br>术语使用效果专项调研报告</div>
+  <div class="cover-subtitle">DeepSeek3.2术语提取能力 × EBLITE模型术语干预效果 × 新旧翻译方案质量对比</div>
+  <div class="cover-meta">
+    <div class="cover-meta-item"><div class="label">测试样本</div><div class="value">10篇跨领域文档</div></div>
+    <div class="cover-meta-item"><div class="label">评估维度</div><div class="value">3大核心模块 · 5项质量指标</div></div>
+    <div class="cover-meta-item"><div class="label">语言方向</div><div class="value">中文 → 英文</div></div>
+    <div class="cover-meta-item"><div class="label">报告版本</div><div class="value">V1.0 完整版</div></div>
+  </div>
+</div>
+
+<div class="body-wrap">
+
+<!-- ══════════ TOC ══════════ -->
+<div class="toc" style="margin-top:40px;">
+  <div class="toc-title">📋 目录</div>
+  <div class="toc-item"><span class="toc-num">一</span><span class="toc-text">调研项目概述</span></div>
+  <div class="toc-item"><span class="toc-num">二</span><span class="toc-text">核心指标整体数据汇总</span></div>
+  <div class="toc-item"><span class="toc-num">三</span><span class="toc-text">分模块详细分析</span></div>
+  <div class="toc-item"><span class="toc-num"> </span><span class="toc-text" style="padding-left:16px;">3.1 标准专业术语基准库提取说明</span></div>
+  <div class="toc-item"><span class="toc-num"> </span><span class="toc-text" style="padding-left:16px;">3.2 DeepSeek3.2术语提取能力详细分析</span></div>
+  <div class="toc-item"><span class="toc-num"> </span><span class="toc-text" style="padding-left:16px;">3.3 EBLITE模型术语干预效果详细分析</span></div>
+  <div class="toc-item"><span class="toc-num"> </span><span class="toc-text" style="padding-left:16px;">3.4 新旧翻译方案质量对比详细分析</span></div>
+  <div class="toc-item"><span class="toc-num">四</span><span class="toc-text">最终调研结论与核心发现</span></div>
+  <div class="toc-item"><span class="toc-num">五</span><span class="toc-text">附录：10篇用例全量明细数据表</span></div>
+</div>
+
+<!-- ══════════ 一、概述 ══════════ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">一</span>
+    <span class="section-title">调研项目概述</span>
+  </div>
+
+  <div class="subsection">
+    <div class="subsection-title">1.1 调研背景与目标</div>
+    <p>本次调研围绕"术语干预能否提升机器翻译质量"这一核心问题展开，验证以DeepSeek3.2（简称DS）自动提取专业术语、再由EBLITE模型按术语词表执行全文翻译的新方案（以下简称<strong>新方案</strong>）是否显著优于EBLITE无术语干预的直接全文翻译（以下简称<strong>旧方案</strong>）。</p>
+    <p>调研设定三个核心目标：<strong>①</strong>量化评估DS的术语提取与翻译能力，验证其替代人工的可行性；<strong>②</strong>量化评估EBLITE对术语干预的执行完成度；<strong>③</strong>以黄金标准参考译文为基准，对比新旧方案的整体译文质量差异。</p>
+  </div>
+
+  <div class="subsection">
+    <div class="subsection-title">1.2 测试样本设计</div>
+    <p>为确保结论的领域普适性，本次测试覆盖<strong>10个不同专业领域</strong>的文档，涵盖正式程度、术语密度、文化负载词比例各异的文本类型：</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>领域</th><th>文本类型</th><th>术语密度特征</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>公共卫生</td><td>WHO官方新闻通稿</td><td>高密度国际组织专有名词 + 人名实体</td></tr>
+          <tr><td>2</td><td>专业医学</td><td>COVID-19传播学指南</td><td>极高密度临床操作术语 + 传染病学概念</td></tr>
+          <tr><td>3</td><td>科技品牌</td><td>华为年报企业文稿</td><td>企业专属品牌词 + ICT通用术语</td></tr>
+          <tr><td>4</td><td>航天政策</td><td>卫星产业发展政策文件</td><td>中等密度产业政策术语</td></tr>
+          <tr><td>5</td><td>网络治理</td><td>互联网政策白皮书</td><td>法律政策术语 + 文化负载词</td></tr>
+          <tr><td>6</td><td>海洋生态</td><td>中国海洋生态环境保护文告</td><td>生态政策术语 + 政治概念词</td></tr>
+          <tr><td>7</td><td>国际关系</td><td>外交立场声明</td><td>外交法律术语 + 领土主权专有名词</td></tr>
+          <tr><td>8</td><td>气候变化</td><td>碳达峰碳中和政策文件</td><td>气候谈判专业术语 + 联合国框架词汇</td></tr>
+          <tr><td>9</td><td>政治法律</td><td>香港国家安全白皮书</td><td>政策制度术语 + 文化隐喻词</td></tr>
+          <tr><td>10</td><td>能源政策</td><td>中国能源发展战略文件</td><td>能源政策术语 + 战略表述词</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <div class="subsection-title">1.3 评估体系说明</div>
+    <p>本次评估采用三步串联的量化分析框架：首先从原文与黄金标准参考译文中提取标准术语基准库；其次计算DS提取的术语召回率与准确率；再次评估EBLITE干预执行率；最后按5维度10分制对两组方案的译文质量评分。所有分析100%基于数据集中的真实文本，不编造任何数据。</p>
+  </div>
+</div>
+
+<!-- ══════════ 二、汇总数据 ══════════ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">二</span>
+    <span class="section-title">核心指标整体数据汇总</span>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi-card">
+      <div class="kpi-num gold">97.9%</div>
+      <div class="kpi-label">DS 平均术语召回率</div>
+      <div class="kpi-sub">9篇100% · 1篇85.7%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-num blue">69.3%</div>
+      <div class="kpi-label">DS 平均术语准确率</div>
+      <div class="kpi-sub">最高91.7% · 最低41.4%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-num green">90.9%</div>
+      <div class="kpi-label">EBLITE 平均干预成功率</div>
+      <div class="kpi-sub">2篇100% · 最低85%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-num red">+0.76</div>
+      <div class="kpi-label">新方案平均质量提升</div>
+      <div class="kpi-sub">新方案8.77分 vs 旧方案8.01分</div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th><th>领域</th>
+          <th>金标准术语数</th><th>DS提取数</th><th>DS召回率</th><th>DS准确率</th>
+          <th>干预成功率</th>
+          <th>新方案评分</th><th>旧方案评分</th><th>提升幅度</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>公共卫生</td><td class="num">14</td><td class="num">29</td>
+          <td class="center"><span class="tag tag-orange">85.7%</span></td>
+          <td class="center"><span class="tag tag-red">41.4%</span></td>
+          <td class="center"><span class="tag tag-green">100%</span></td>
+          <td class="num" style="color:var(--green);font-size:16px;font-weight:700">9.4</td>
+          <td class="num">7.7</td>
+          <td class="num" style="color:var(--accent)">+1.7</td>
+        </tr>
+        <tr><td>2</td><td>专业医学</td><td class="num">19</td><td class="num">29</td>
+          <td class="center"><span class="tag tag-green">100%</span></td>
+          <td class="center"><span class="tag tag-orange">65.5%</span></td>
+          <td class="center"><span class="tag tag-orange">89.7%</span></td>
+          <td class="num" style="color:var(--green);font-size:16px;font-weight:700">9.0</td>
+          <td class="num">8.2</td>
+          <td class="num" style="color:var(--accent)">+0.8</td>
+        </tr>
+        <tr><td>3</td><td>科技品牌</td><td class="num">16</td><td class="num">26</td>
+          <td class="center"><span class="tag tag-green">93.8%</span></td>
+          <td class="center"><span class="tag tag-orange">80.8%</span></td>
+          <td class="center"><span class="tag tag-green">100%</span></td>
+          <td class="num" style="color:var(--warn);font-size:16px;font-weight:700">7.7</td>
+          <td class="num">7.2</td>
+          <td class="num" style="color:var(--accent)">+0.5</td>
+        </tr>
+        <tr><td>4</td><td>航天政策</td><td class="num">10</td><td class="num">11</td>
+          <td class="center"><span class="tag tag-green">100%</span></td>
+          <td class="center"><span class="tag tag-green">90.9%</span></td>
+          <td class="center"><span class="tag tag-green">91%</span></td>
+          <td class="num" style="color:var(--green);font-size:16px;font-weight:700">9.1</td>
+          <td class="num">8.3</td>
+          <td class="num" style="color:var(--accent)">+0.8</td>
+        </tr>
+        <tr><td>5</td><td>网络治理</td><td class="num">9</td><td class="num">15</td>
+          <td class="center"><span class="tag tag-green">100%</span></td>
+          <td class="center"><span class="tag tag-orange">60.0%</span></td>
+          <td class="center"><span class="tag tag-orange">87%</span></td>
+          <td class="num" style="color:var(--green);font-size:16px;font-weight:700">8.6</td>
+          <td class="num">8.2</td>
+          <td class="num" style="color:var(--accent)">+0.4</td>
+        </tr>
+        <tr><td>6</td><td>海洋生态</td><td class="num">11</td><td class="num">18</td>
+          <td class="center"><span class="tag tag-green">100%</span></td>
+          <td class="center"><span class="tag tag-orange">61.1%</span></td>
+          <td class="center"><span class="tag tag-orange">89%</span></td>
+          <td class="num" style="color:var(--green);font-size:16px;font-weight:700">9.0</td>
+          <td class="num">8.1</td>
+          <td class="num" style="color:var(--accent)">+0.9</td>
+        </tr>
+        <tr><td>7</td><td>国际关系</td><td class="num">13</td><td class="num">19</td>
+          <td class="center"><span class="tag tag-green">100%</span></td>
+          <td class="center"><span class="tag tag-orange">68.4%</span></td>
+          <td class="center"><span class="tag tag-orange">89%</span></td>
+          <td class="num" style="color:var(--green);font-size:16px;font-weight:700">8.9</td>
+          <td class="num">8.0</td>
+          <td class="num" style="color:var(--accent)">+0.9</td>
+        </tr>
+        <tr><td>8</td><td>气候变化</td><td class="num">9</td><td class="num">13</td>
+          <td class="center"><span class="tag tag-green">100%</span></td>
+          <td class="center"><span class="tag tag-orange">69.2%</span></td>
+          <td class="center"><span class="tag tag-orange">85%</span></td>
+          <td class="num" style="color:var(--green);font-size:16px;font-weight:700">8.9</td>
+          <td class="num">8.2</td>
+          <td class="num" style="color:var(--accent)">+0.7</td>
+        </tr>
+        <tr><td>9</td><td>政治法律</td><td class="num">11</td><td class="num">12</td>
+          <td class="center"><span class="tag tag-green">100%</span></td>
+          <td class="center"><span class="tag tag-green">91.7%</span></td>
+          <td class="center"><span class="tag tag-green">92%</span></td>
+          <td class="num" style="color:var(--green);font-size:16px;font-weight:700">8.1</td>
+          <td class="num">7.8</td>
+          <td class="num" style="color:var(--accent)">+0.3</td>
+        </tr>
+        <tr><td>10</td><td>能源政策</td><td class="num">9</td><td class="num">14</td>
+          <td class="center"><span class="tag tag-green">100%</span></td>
+          <td class="center"><span class="tag tag-orange">64.3%</span></td>
+          <td class="center"><span class="tag tag-orange">86%</span></td>
+          <td class="num" style="color:var(--green);font-size:16px;font-weight:700">9.0</td>
+          <td class="num">8.4</td>
+          <td class="num" style="color:var(--accent)">+0.6</td>
+        </tr>
+        <tr style="background:#eaf0fb;font-weight:700;">
+          <td colspan="2"><strong>整体均值</strong></td>
+          <td class="num">12.1</td><td class="num">18.6</td>
+          <td class="center"><strong>97.9%</strong></td>
+          <td class="center"><strong>69.3%</strong></td>
+          <td class="center"><strong>90.9%</strong></td>
+          <td class="num" style="color:var(--green)"><strong>8.77</strong></td>
+          <td class="num"><strong>8.01</strong></td>
+          <td class="num" style="color:var(--accent)"><strong>+0.76</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════ 三、分模块详细分析 ══════════ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">三</span>
+    <span class="section-title">分模块详细分析</span>
+  </div>
+
+  <!-- 3.1 术语基准库 -->
+  <div class="subsection">
+    <div class="subsection-title">3.1 标准专业术语基准库提取说明</div>
+    <p>标准术语基准库以每篇测试用例的原文与黄金标准参考译文为唯一依据提取，遵循"具备专属固定含义、领域规范表达、直接影响语义准确性"三重标准，剔除通用高频词与一般描述性词语。10篇共提取金标准术语<strong>121个</strong>，平均每篇12.1个。</p>
+    <div class="glossary-grid">
+
+      <div class="glossary-card">
+        <div class="glossary-card-header">用例1 · 公共卫生（14项）</div>
+        <div class="glossary-item"><span class="glossary-src">世界卫生组织</span><span class="glossary-tgt">World Health Organization (WHO)</span></div>
+        <div class="glossary-item"><span class="glossary-src">全球合作中心论坛</span><span class="glossary-tgt">Global Forum of Collaborating Centres</span></div>
+        <div class="glossary-item"><span class="glossary-src">合作中心</span><span class="glossary-tgt">Collaborating Centres (CCs)</span></div>
+        <div class="glossary-item"><span class="glossary-src">世界卫生大会</span><span class="glossary-tgt">World Health Assembly</span></div>
+        <div class="glossary-item"><span class="glossary-src">总干事</span><span class="glossary-tgt">Director-General</span></div>
+        <div class="glossary-item"><span class="glossary-src">同一健康</span><span class="glossary-tgt">One Health</span></div>
+        <div class="glossary-item"><span class="glossary-src">世界卫生日</span><span class="glossary-tgt">World Health Day</span></div>
+        <div class="glossary-item"><span class="glossary-src">首席科学家</span><span class="glossary-tgt">Chief Scientist</span></div>
+        <div class="glossary-item"><span class="glossary-src">合作开放研究联盟</span><span class="glossary-tgt">Collaborative Open Research Consortia (CORC)</span></div>
+        <div class="glossary-item"><span class="glossary-src">X疾病</span><span class="glossary-tgt">Disease X</span></div>
+        <div class="glossary-item"><span class="glossary-src">谭德塞博士</span><span class="glossary-tgt">Dr Tedros Adhanom Ghebreyesus</span></div>
+        <div class="glossary-item"><span class="glossary-src">西尔维·布里昂博士</span><span class="glossary-tgt">Dr Sylvie Briand</span></div>
+        <div class="glossary-item"><span class="glossary-src">全球卫生筹资</span><span class="glossary-tgt">global health financing</span></div>
+        <div class="glossary-item"><span class="glossary-src">科学准备</span><span class="glossary-tgt">scientific readiness / preparedness</span></div>
+      </div>
+
+      <div class="glossary-card">
+        <div class="glossary-card-header">用例2 · 专业医学（19项）</div>
+        <div class="glossary-item"><span class="glossary-src">COVID-19病毒</span><span class="glossary-tgt">COVID-19 virus</span></div>
+        <div class="glossary-item"><span class="glossary-src">呼吸道飞沫</span><span class="glossary-tgt">respiratory droplets</span></div>
+        <div class="glossary-item"><span class="glossary-src">飞沫核</span><span class="glossary-tgt">droplet nuclei</span></div>
+        <div class="glossary-item"><span class="glossary-src">接触途径</span><span class="glossary-tgt">contact routes</span></div>
+        <div class="glossary-item"><span class="glossary-src">飞沫传播</span><span class="glossary-tgt">droplet transmission</span></div>
+        <div class="glossary-item"><span class="glossary-src">空气传播</span><span class="glossary-tgt">airborne transmission</span></div>
+        <div class="glossary-item"><span class="glossary-src">粘膜</span><span class="glossary-tgt">mucosae</span></div>
+        <div class="glossary-item"><span class="glossary-src">结膜</span><span class="glossary-tgt">conjunctiva</span></div>
+        <div class="glossary-item"><span class="glossary-src">污染物</span><span class="glossary-tgt">fomites</span></div>
+        <div class="glossary-item"><span class="glossary-src">产生气溶胶的程序</span><span class="glossary-tgt">aerosol-generating procedures (AGPs)</span></div>
+        <div class="glossary-item"><span class="glossary-src">气管插管</span><span class="glossary-tgt">endotracheal intubation</span></div>
+        <div class="glossary-item"><span class="glossary-src">支气管镜检查</span><span class="glossary-tgt">bronchoscopy</span></div>
+        <div class="glossary-item"><span class="glossary-src">开放式抽吸</span><span class="glossary-tgt">open suctioning</span></div>
+        <div class="glossary-item"><span class="glossary-src">雾化治疗</span><span class="glossary-tgt">nebulized treatment</span></div>
+        <div class="glossary-item"><span class="glossary-src">插管前手动通气</span><span class="glossary-tgt">manual ventilation before intubation</span></div>
+        <div class="glossary-item"><span class="glossary-src">无创正压通气</span><span class="glossary-tgt">non-invasive positive-pressure ventilation</span></div>
+        <div class="glossary-item"><span class="glossary-src">气管造口术</span><span class="glossary-tgt">tracheostomy</span></div>
+        <div class="glossary-item"><span class="glossary-src">心肺复苏</span><span class="glossary-tgt">cardiopulmonary resuscitation</span></div>
+        <div class="glossary-item"><span class="glossary-src">俯卧位</span><span class="glossary-tgt">prone position</span></div>
+      </div>
+
+      <div class="glossary-card">
+        <div class="glossary-card-header">用例3 · 科技品牌（16项）</div>
+        <div class="glossary-item"><span class="glossary-src">全面智能化</span><span class="glossary-tgt">All Intelligence (Strategy)</span></div>
+        <div class="glossary-item"><span class="glossary-src">昇腾384超节点</span><span class="glossary-tgt">384-NPU SuperPoD</span></div>
+        <div class="glossary-item"><span class="glossary-src">鲲鹏</span><span class="glossary-tgt">Kunpeng</span></div>
+        <div class="glossary-item"><span class="glossary-src">昇腾</span><span class="glossary-tgt">Ascend</span></div>
+        <div class="glossary-item"><span class="glossary-src">鲲鹏应用使能套件BoostKit</span><span class="glossary-tgt">Kunpeng BoostKit</span></div>
+        <div class="glossary-item"><span class="glossary-src">昇腾CANN</span><span class="glossary-tgt">Ascend CANN</span></div>
+        <div class="glossary-item"><span class="glossary-src">数智生产力</span><span class="glossary-tgt">digital and intelligent productivity</span></div>
+        <div class="glossary-item"><span class="glossary-src">智能汽车解决方案</span><span class="glossary-tgt">intelligent automotive solution</span></div>
+        <div class="glossary-item"><span class="glossary-src" style="color:var(--red)">乾崑智驾</span><span class="glossary-tgt">HUAWEI ADS <span class="glossary-badge badge-wrong">DS错译</span></span></div>
+        <div class="glossary-item"><span class="glossary-src" style="color:var(--red)">鸿蒙座舱</span><span class="glossary-tgt">HarmonySpace <span class="glossary-badge badge-wrong">DS错译</span></span></div>
+        <div class="glossary-item"><span class="glossary-src" style="color:var(--red)">乾崑车控</span><span class="glossary-tgt">HUAWEI Vehicle Control <span class="glossary-badge badge-wrong">DS错译</span></span></div>
+        <div class="glossary-item"><span class="glossary-src" style="color:var(--red)">乾崑车载光</span><span class="glossary-tgt">HUAWEI Automotive Optics <span class="glossary-badge badge-wrong">DS错译</span></span></div>
+        <div class="glossary-item"><span class="glossary-src">全场景光储解决方案</span><span class="glossary-tgt">all-scenario "PV + ESS" solutions</span></div>
+        <div class="glossary-item"><span class="glossary-src">构网技术</span><span class="glossary-tgt">grid-forming technology</span></div>
+        <div class="glossary-item"><span class="glossary-src">光风储</span><span class="glossary-tgt">PV, wind, and ESS</span></div>
+        <div class="glossary-item"><span class="glossary-src">华为云</span><span class="glossary-tgt">Huawei Cloud</span></div>
+      </div>
+
+      <div class="glossary-card">
+        <div class="glossary-card-header">用例4~10 · 核心术语摘要</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">（各篇完整术语库详见附录）</div>
+        <div class="glossary-item"><span class="glossary-src">大众创业、万众创新</span><span class="glossary-tgt">mass entrepreneurship and innovation</span></div>
+        <div class="glossary-item"><span class="glossary-src">网络空间</span><span class="glossary-tgt">cyberspace</span></div>
+        <div class="glossary-item"><span class="glossary-src">海洋命运共同体</span><span class="glossary-tgt">maritime community with a shared future</span></div>
+        <div class="glossary-item"><span class="glossary-src">航行和飞越自由</span><span class="glossary-tgt">freedom of navigation and overflight</span></div>
+        <div class="glossary-item"><span class="glossary-src">国家自主贡献目标</span><span class="glossary-tgt">Nationally Determined Contributions (NDCs)</span></div>
+        <div class="glossary-item"><span class="glossary-src">一国两制</span><span class="glossary-tgt">One Country, Two Systems</span></div>
+        <div class="glossary-item"><span class="glossary-src">供给侧结构性改革</span><span class="glossary-tgt">supply-side structural reform</span></div>
+        <div class="glossary-item"><span class="glossary-src">四个革命、一个合作</span><span class="glossary-tgt">Four Revolutions and One Cooperation</span></div>
+        <div class="glossary-item"><span class="glossary-src">卫星应用产业链</span><span class="glossary-tgt">satellite application industry chain</span></div>
+        <div class="glossary-item"><span class="glossary-src">高质量发展</span><span class="glossary-tgt">high-quality development</span></div>
+        <div class="glossary-item"><span class="glossary-src">系统治理</span><span class="glossary-tgt">systematic governance</span></div>
+        <div class="glossary-item"><span class="glossary-src">生态优先</span><span class="glossary-tgt">ecological conservation as a priority</span></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="page-break">
+
+  <!-- 3.2 DS分析 -->
+  <div class="subsection">
+    <div class="subsection-title">3.2 DeepSeek3.2术语提取能力详细分析</div>
+
+    <p><strong>整体数据解读：</strong>10篇测试用例中，DS的术语召回率均值达<strong>97.9%</strong>，9篇达到100%，仅1篇（公共卫生）因系统性漏抽人名实体而为85.7%。这表明DS对中文专业文本中的制度性术语、领域概念词具有极强的覆盖能力。然而，准确率均值仅为<strong>69.3%</strong>，DS平均提取18.6个术语（金标准均值12.1个），过度抽取率约35%，说明DS指令遵循的"排他性"偏弱，难以精准区分专属固定术语与高频通用表述。</p>
+
+    <div class="callout callout-success">
+      <div class="callout-title">✅ 核心优势</div>
+      <p><strong>双语翻译能力极强</strong>：即便对于过度抽取的边界词汇，DS给出的英文译法整体准确率超90%，几乎全面契合相应领域的国际规范用语（WHO官方语境、医学指南标准、外交文本惯例等），体现了DS强大的跨领域专业知识储备。</p>
+    </div>
+
+    <div class="callout callout-danger">
+      <div class="callout-title">❌ 系统性缺陷</div>
+      <p><strong>① 人名/品牌专有名词处理不足</strong>：公共卫生篇漏抽两位人名，科技品牌篇将5个华为专属品牌词字面直译（乾崑→Qiankun，鸿蒙座舱→Harmony Cockpit），DS自身语料库中无企业官方品牌词，无法通过自身能力解决；<strong>② 过度抽取率偏高</strong>：准确率平均仅69.3%，将通用高频词（"高质量发展""卫生研究""现实社会"）混入术语表；<strong>③ 部分完整句子被误识别为术语</strong>（如气候变化篇中"中国二氧化碳排放力争于2030年前达到峰值"被作为一条术语输出，违反术语颗粒度规范）。</p>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>领域</th><th>金标准数</th><th>DS提取数</th><th>命中数</th><th>召回率</th><th>准确率</th><th>主要漏抽</th><th>主要误抽类型</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>公共卫生</td><td class="num">14</td><td class="num">29</td><td class="num">12</td>
+            <td><span class="tag tag-orange">85.7%</span></td><td><span class="tag tag-red">41.4%</span></td>
+            <td>谭德塞博士、西尔维博士（人名）</td><td>大量通用词（能力建设、卫生研究等）</td></tr>
+          <tr><td>2</td><td>专业医学</td><td class="num">19</td><td class="num">29</td><td class="num">19</td>
+            <td><span class="tag tag-green">100%</span></td><td><span class="tag tag-orange">65.5%</span></td>
+            <td>无</td><td>医学指南常用词（直接接触、俯卧位等，翻译正确）</td></tr>
+          <tr><td>3</td><td>科技品牌</td><td class="num">16</td><td class="num">26</td><td class="num">15</td>
+            <td><span class="tag tag-green">93.8%</span></td><td><span class="tag tag-orange">80.8%</span></td>
+            <td>384-NPU SuperPoD产品代号</td><td>5个汽车品牌词字面直译（致命错误）</td></tr>
+          <tr><td>4</td><td>航天政策</td><td class="num">10</td><td class="num">11</td><td class="num">10</td>
+            <td><span class="tag tag-green">100%</span></td><td><span class="tag tag-green">90.9%</span></td>
+            <td>无</td><td>1个边界术语（轻度过抽）</td></tr>
+          <tr><td>5</td><td>网络治理</td><td class="num">9</td><td class="num">15</td><td class="num">9</td>
+            <td><span class="tag tag-green">100%</span></td><td><span class="tag tag-orange">60.0%</span></td>
+            <td>无</td><td>一般描述词（现实社会/提倡自由等）；法外之地译法偏低（lawless zone）</td></tr>
+          <tr><td>6</td><td>海洋生态</td><td class="num">11</td><td class="num">18</td><td class="num">11</td>
+            <td><span class="tag tag-green">100%</span></td><td><span class="tag tag-orange">61.1%</span></td>
+            <td>无</td><td>延伸性生态词汇（地球生态平衡、可持续利用等）</td></tr>
+          <tr><td>7</td><td>国际关系</td><td class="num">13</td><td class="num">19</td><td class="num">13</td>
+            <td><span class="tag tag-green">100%</span></td><td><span class="tag tag-orange">68.4%</span></td>
+            <td>无</td><td>通用外交词（岛礁/巡航/争议等）</td></tr>
+          <tr><td>8</td><td>气候变化</td><td class="num">9</td><td class="num">13</td><td class="num">9</td>
+            <td><span class="tag tag-green">100%</span></td><td><span class="tag tag-orange">69.2%</span></td>
+            <td>无</td><td>2个完整政策句子被误作术语；重大决策部署等通用词</td></tr>
+          <tr><td>9</td><td>政治法律</td><td class="num">11</td><td class="num">12</td><td class="num">11</td>
+            <td><span class="tag tag-green">100%</span></td><td><span class="tag tag-green">91.7%</span></td>
+            <td>无</td><td>隐喻词的解释性翻译策略偏差（golden hoop vs inhibition）</td></tr>
+          <tr><td>10</td><td>能源政策</td><td class="num">9</td><td class="num">14</td><td class="num">9</td>
+            <td><span class="tag tag-green">100%</span></td><td><span class="tag tag-orange">64.3%</span></td>
+            <td>无</td><td>人名（习近平主席）、新时代等泛化词</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-info">
+      <div class="callout-title">💡 Prompt优化建议</div>
+      <p><strong>方向①</strong> 强化排他性约束：明确禁止提取通用高频词、一般描述词，增加"不得提取非专属表述"的反向约束；<strong>方向②</strong> 强制人名/机构名实体抽取：在prompt中增加"必须强制抽取所有专有人名、机构缩写、特定会议名称"；<strong>方向③</strong> 企业文稿补充知识库：对品牌密集的企业文稿，在DS调用时预置品牌词知识库，避免字面直译；<strong>方向④</strong> 明确术语颗粒度：禁止将句子级别的表述纳入术语表。</p>
+    </div>
+  </div>
+
+  <hr class="page-break">
+
+  <!-- 3.3 EBLITE干预分析 -->
+  <div class="subsection">
+    <div class="subsection-title">3.3 EBLITE模型术语干预效果详细分析</div>
+
+    <p><strong>整体数据解读：</strong>EBLITE模型术语干预成功率均值为<strong>90.9%</strong>，其中2篇达到100%（公共卫生、科技品牌），整体表现良好。但10篇中有8篇存在不同程度的干预未落地情况，集中体现为EBLITE以自身训练权重覆盖DS提供译法（Glossary Overriding），以及过度抽取的非术语词汇无法在译文中形成有效干预。</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>领域</th><th>输入术语数</th><th>成功干预数</th><th>干预成功率</th><th>干预失败案例</th><th>失败原因</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>公共卫生</td><td class="num">29</td><td class="num">29</td><td><span class="tag tag-green">100%</span></td><td>无</td><td>—</td></tr>
+          <tr><td>2</td><td>专业医学</td><td class="num">29</td><td class="num">26</td><td><span class="tag tag-orange">89.7%</span></td>
+            <td>污染物→pollutants（应fomites）；COVID-19→SARS-CoV-2；人与人之间传播</td>
+            <td>模型自身训练权重强，主动覆盖DS译法（Glossary Overriding）</td></tr>
+          <tr><td>3</td><td>科技品牌</td><td class="num">26</td><td class="num">26</td><td><span class="tag tag-green">100%</span></td>
+            <td>全量执行但5个品牌词DS源头错误</td>
+            <td>干预成功但执行了错误译法——上游DS翻译错误的放大</td></tr>
+          <tr><td>4</td><td>航天政策</td><td class="num">11</td><td class="num">10</td><td><span class="tag tag-green">91%</span></td>
+            <td>1个边界词汇自然融入，难以独立判定</td><td>术语过于通用，干预效果模糊</td></tr>
+          <tr><td>5</td><td>网络治理</td><td class="num">15</td><td class="num">13</td><td><span class="tag tag-orange">87%</span></td>
+            <td>6个过度抽取的通用词（现实社会/提倡自由等）无显著干预痕迹</td>
+            <td>过度抽取词汇不具备区分干预效果的条件</td></tr>
+          <tr><td>6</td><td>海洋生态</td><td class="num">18</td><td class="num">16</td><td><span class="tag tag-orange">89%</span></td>
+            <td>2个过度抽取延伸词未能形成可识别干预</td><td>同上</td></tr>
+          <tr><td>7</td><td>国际关系</td><td class="num">19</td><td class="num">17</td><td><span class="tag tag-orange">89%</span></td>
+            <td>争议/巡航等过度抽取通用词未见干预</td><td>同上</td></tr>
+          <tr><td>8</td><td>气候变化</td><td class="num">13</td><td class="num">11</td><td><span class="tag tag-orange">85%</span></td>
+            <td>2个完整句子无法作为干预术语被识别</td><td>术语颗粒度不当（句子≠术语）</td></tr>
+          <tr><td>9</td><td>政治法律</td><td class="num">12</td><td class="num">11</td><td><span class="tag tag-green">92%</span></td>
+            <td>括号注释策略（golden hoop metaphor…）被完整执行，破坏文体</td>
+            <td>DS译法策略问题被EBLITE精准执行，放大了风格偏差</td></tr>
+          <tr><td>10</td><td>能源政策</td><td class="num">14</td><td class="num">12</td><td><span class="tag tag-orange">86%</span></td>
+            <td>人名"习近平主席"不需要干预；"新时代"等通用词</td>
+            <td>DS过度抽取导致无效干预项</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-warn">
+      <div class="callout-title">⚠️ 核心风险：Glossary Overriding（词表覆盖失效）</div>
+      <p>专业医学篇最典型地暴露了EBLITE的"拒不执行"问题：模型对自身训练语料中权重极高的医学词汇（如SARS-CoV-2、pollutants）具有主动覆盖DS词表的倾向。这意味着在<strong>医学、法律、外交等高专业精度领域</strong>，若干预词汇与模型默认译法存在冲突，EBLITE的干预执行成功率会出现系统性下降，是当前方案的最大技术风险点。</p>
+    </div>
+
+    <div class="callout callout-danger">
+      <div class="callout-title">⚠️ 级联风险：错误执行的100%干预</div>
+      <p>科技品牌篇揭示了另一类风险：EBLITE对DS的干预成功率达到100%，却将DS给出的错误品牌译法（Qiankun Intelligent Driving等）100%写入最终译文。<strong>干预执行率越高，DS上游错误的放大效应越强</strong>——这是一个"忠实执行了错误指令"的典型反例，强调了DS术语质量控制的决定性作用。</p>
+    </div>
+  </div>
+
+  <hr class="page-break">
+
+  <!-- 3.4 质量对比分析 -->
+  <div class="subsection">
+    <div class="subsection-title">3.4 新旧翻译方案质量对比详细分析</div>
+
+    <p><strong>整体数据解读：</strong>新方案（DS术语干预+EBLITE翻译）在全部10篇用例中均高于旧方案（EBLITE直接翻译），平均分差<strong>+0.76分</strong>（新8.77 vs 旧8.01），最大提升出现在公共卫生篇（+1.7分），最小提升出现在香港安全篇（+0.3分）。新方案的核心优势集中在<strong>术语一致性</strong>维度，平均高出旧方案约0.5分；其余维度差距相对均匀。</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0;">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:12px;">各篇新旧方案质量总分对比</div>
+        <div class="bar-row"><span class="bar-label">公共卫生</span><div class="bar-wrap"><div class="bar-fill new" style="width:94%"></div></div><span class="bar-val" style="color:var(--accent)">9.4</span></div>
+        <div class="bar-row"><span class="bar-label" style="color:#aaa"></span><div class="bar-wrap"><div class="bar-fill old" style="width:77%"></div></div><span class="bar-val" style="color:#aaa">7.7</span></div>
+        <div class="bar-row"><span class="bar-label">专业医学</span><div class="bar-wrap"><div class="bar-fill new" style="width:90%"></div></div><span class="bar-val" style="color:var(--accent)">9.0</span></div>
+        <div class="bar-row"><span class="bar-label" style="color:#aaa"></span><div class="bar-wrap"><div class="bar-fill old" style="width:82%"></div></div><span class="bar-val" style="color:#aaa">8.2</span></div>
+        <div class="bar-row"><span class="bar-label">科技品牌</span><div class="bar-wrap"><div class="bar-fill new" style="width:77%"></div></div><span class="bar-val" style="color:var(--accent)">7.7</span></div>
+        <div class="bar-row"><span class="bar-label" style="color:#aaa"></span><div class="bar-wrap"><div class="bar-fill old" style="width:72%"></div></div><span class="bar-val" style="color:#aaa">7.2</span></div>
+        <div class="bar-row"><span class="bar-label">航天政策</span><div class="bar-wrap"><div class="bar-fill new" style="width:91%"></div></div><span class="bar-val" style="color:var(--accent)">9.1</span></div>
+        <div class="bar-row"><span class="bar-label" style="color:#aaa"></span><div class="bar-wrap"><div class="bar-fill old" style="width:83%"></div></div><span class="bar-val" style="color:#aaa">8.3</span></div>
+        <div class="bar-row"><span class="bar-label">网络治理</span><div class="bar-wrap"><div class="bar-fill new" style="width:86%"></div></div><span class="bar-val" style="color:var(--accent)">8.6</span></div>
+        <div class="bar-row"><span class="bar-label" style="color:#aaa"></span><div class="bar-wrap"><div class="bar-fill old" style="width:82%"></div></div><span class="bar-val" style="color:#aaa">8.2</span></div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:12px;"> </div>
+        <div class="bar-row"><span class="bar-label">海洋生态</span><div class="bar-wrap"><div class="bar-fill new" style="width:90%"></div></div><span class="bar-val" style="color:var(--accent)">9.0</span></div>
+        <div class="bar-row"><span class="bar-label" style="color:#aaa"></span><div class="bar-wrap"><div class="bar-fill old" style="width:81%"></div></div><span class="bar-val" style="color:#aaa">8.1</span></div>
+        <div class="bar-row"><span class="bar-label">国际关系</span><div class="bar-wrap"><div class="bar-fill new" style="width:89%"></div></div><span class="bar-val" style="color:var(--accent)">8.9</span></div>
+        <div class="bar-row"><span class="bar-label" style="color:#aaa"></span><div class="bar-wrap"><div class="bar-fill old" style="width:80%"></div></div><span class="bar-val" style="color:#aaa">8.0</span></div>
+        <div class="bar-row"><span class="bar-label">气候变化</span><div class="bar-wrap"><div class="bar-fill new" style="width:89%"></div></div><span class="bar-val" style="color:var(--accent)">8.9</span></div>
+        <div class="bar-row"><span class="bar-label" style="color:#aaa"></span><div class="bar-wrap"><div class="bar-fill old" style="width:82%"></div></div><span class="bar-val" style="color:#aaa">8.2</span></div>
+        <div class="bar-row"><span class="bar-label">政治法律</span><div class="bar-wrap"><div class="bar-fill new" style="width:81%"></div></div><span class="bar-val" style="color:var(--accent)">8.1</span></div>
+        <div class="bar-row"><span class="bar-label" style="color:#aaa"></span><div class="bar-wrap"><div class="bar-fill old" style="width:78%"></div></div><span class="bar-val" style="color:#aaa">7.8</span></div>
+        <div class="bar-row"><span class="bar-label">能源政策</span><div class="bar-wrap"><div class="bar-fill new" style="width:90%"></div></div><span class="bar-val" style="color:var(--accent)">9.0</span></div>
+        <div class="bar-row"><span class="bar-label" style="color:#aaa"></span><div class="bar-wrap"><div class="bar-fill old" style="width:84%"></div></div><span class="bar-val" style="color:#aaa">8.4</span></div>
+      </div>
+    </div>
+
+    <div class="subsection-title" style="margin-top:28px;">3.4.1 典型质量差异案例汇总</div>
+
+    <div class="case-card">
+      <div class="case-card-header">
+        <span class="case-card-title">案例A · 公共卫生：专有名词系统性修复（提升幅度最大 +1.7分）</span>
+        <span class="case-card-domain">旧方案：7.7 → 新方案：9.4</span>
+      </div>
+      <div class="case-card-body">
+        <div class="table-wrap" style="margin:0;">
+          <table style="font-size:12px;">
+            <thead><tr><th>原文术语</th><th>旧方案译法 ❌</th><th>新方案译法 ✅</th><th>金标准</th></tr></thead>
+            <tbody>
+              <tr><td>全球合作中心论坛</td><td style="color:var(--red)">Global Collaboration Centres Forum</td><td style="color:var(--green)">Global Forum of Collaborating Centres</td><td>Global Forum of Collaborating Centres</td></tr>
+              <tr><td>合作中心</td><td style="color:var(--red)">Collaboration Centres</td><td style="color:var(--green)">Collaborating Centres (CCs)</td><td>Collaborating Centres</td></tr>
+              <tr><td>合作开放研究联盟</td><td style="color:var(--red)">Collaborative Open Research Coalition</td><td style="color:var(--green)">Collaborative Open Research Consortia (CORC)</td><td>CORC</td></tr>
+              <tr><td>X疾病</td><td style="color:var(--red)">X diseases</td><td style="color:var(--green)">Disease X</td><td>Disease X</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="case-card">
+      <div class="case-card-header">
+        <span class="case-card-title">案例B · 专业医学：fomites / SARS-CoV-2 的医学精准度之争</span>
+        <span class="case-card-domain">旧方案：8.2 → 新方案：9.0</span>
+      </div>
+      <div class="case-card-body">
+        <div class="table-wrap" style="margin:0;">
+          <table style="font-size:12px;">
+            <thead><tr><th>原文术语</th><th>旧方案译法</th><th>新方案译法</th><th>金标准</th></tr></thead>
+            <tbody>
+              <tr><td>污染物（医学语境）</td><td style="color:var(--red)">pollutants（日常英语）</td><td style="color:var(--red)">pollutants（EBLITE拒执行）</td><td style="color:var(--green)">fomites（医学专用词）</td></tr>
+              <tr><td>COVID-19病毒</td><td>SARS-CoV-2 virus</td><td>SARS-CoV-2 virus（EBLITE覆盖）</td><td>COVID-19 virus</td></tr>
+              <tr><td>产生气溶胶的程序</td><td style="color:var(--red)">procedures that generate aerosols</td><td style="color:var(--green)">aerosol-generating procedures (AGPs)</td><td>aerosol-generating procedures</td></tr>
+              <tr><td>接触途径</td><td style="color:var(--red)">contact transmission</td><td style="color:var(--green)">contact routes</td><td>contact routes</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="case-card">
+      <div class="case-card-header">
+        <span class="case-card-title">案例C · 科技品牌：100%干预执行 + DS源头错误 = 系统性品牌错误</span>
+        <span class="case-card-domain">旧方案：7.2 → 新方案：7.7（提升最小且仍存在严重错误）</span>
+      </div>
+      <div class="case-card-body">
+        <div class="table-wrap" style="margin:0;">
+          <table style="font-size:12px;">
+            <thead><tr><th>原文术语</th><th>DS给出译法</th><th>新方案最终译文</th><th>官方正确译法</th></tr></thead>
+            <tbody>
+              <tr><td>乾崑智驾</td><td style="color:var(--red)">Qiankun Intelligent Driving</td><td style="color:var(--red)">Qiankun Intelligent Driving</td><td style="color:var(--green)">HUAWEI ADS</td></tr>
+              <tr><td>鸿蒙座舱</td><td style="color:var(--red)">Harmony Cockpit</td><td style="color:var(--red)">Harmony Cockpit</td><td style="color:var(--green)">HarmonySpace</td></tr>
+              <tr><td>乾崑车控</td><td style="color:var(--red)">Qiankun Vehicle Control</td><td style="color:var(--red)">Qiankun Vehicle Control</td><td style="color:var(--green)">HUAWEI Vehicle Control</td></tr>
+              <tr><td>全面智能化</td><td style="color:var(--green)">All Intelligence</td><td style="color:var(--green)">All Intelligence</td><td style="color:var(--green)">All Intelligence ✓</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="case-card">
+      <div class="case-card-header">
+        <span class="case-card-title">案例D · 海洋/外交：maritime vs marine 等关键规范词的纠偏</span>
+        <span class="case-card-domain">海洋生态：+0.9分 · 国际关系：+0.9分</span>
+      </div>
+      <div class="case-card-body">
+        <div class="table-wrap" style="margin:0;">
+          <table style="font-size:12px;">
+            <thead><tr><th>原文术语</th><th>旧方案译法 ❌</th><th>新方案译法 ✅</th><th>说明</th></tr></thead>
+            <tbody>
+              <tr><td>海洋命运共同体</td><td style="color:var(--red)">marine community with a shared future</td><td style="color:var(--green)">maritime community with a shared future</td><td>maritime（航海/人文关系）vs marine（自然生态），意义层级不同</td></tr>
+              <tr><td>防御性力量</td><td style="color:var(--red)">defensive forces</td><td style="color:var(--green)">defensive capabilities</td><td>外交文本规范用词，与参考译文一致</td></tr>
+              <tr><td>国家自主贡献目标</td><td style="color:var(--red)">nationally determined contribution goal</td><td style="color:var(--green)">Nationally Determined Contributions (NDCs)</td><td>联合国气候谈判正式缩写，旧方案缺失NDC</td></tr>
+              <tr><td>海上通道安全</td><td style="color:var(--red)">maritime routes</td><td style="color:var(--green)">safety of sea lanes</td><td>参考译文为SLOCs，新方案接近但未达最高规范</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ 四、最终结论 ══════════ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">四</span>
+    <span class="section-title">最终调研结论与核心发现</span>
+  </div>
+
+  <div class="conclusion-box">
+    <h3>🔍 三大核心目标对应结论</h3>
+
+    <div class="conclusion-item">
+      <span class="conclusion-num">目标①</span>
+      <div>
+        <strong>DS的专业术语提取与翻译能力：可用，但需针对性优化，尚不能完全替代人工。</strong><br>
+        DS召回率均值97.9%，在通用专业领域（医学、外交、气候、能源等）表现接近满分，可替代人工完成大部分术语覆盖任务；但准确率均值仅69.3%，过度抽取问题突出，且对品牌专词、人名实体和完整句子存在系统性处理缺陷。在<strong>品牌密集型文稿</strong>中，DS必须配备企业知识库方可落地；在<strong>通用政策/科技文稿</strong>中，DS具备实际替代人工的可行性，但需同步优化Prompt以减少过度抽取。
+      </div>
+    </div>
+
+    <div class="conclusion-item">
+      <span class="conclusion-num">目标②</span>
+      <div>
+        <strong>EBLITE模型术语干预执行效果：整体良好（90.9%），但存在两类关键风险。</strong><br>
+        EBLITE对DS提供的术语词表具有较高的遵循意愿，尤其在词汇首次出现、专业度高、与模型默认译法差距大的术语上执行优秀。两类核心风险：<strong>①Glossary Overriding</strong>——在少数与自身训练权重强冲突的词汇上（如医学中的fomites/SARS-CoV-2），模型会主动覆盖DS指定译法；<strong>②级联错误放大</strong>——当DS上游提供错误翻译时（如华为品牌词），EBLITE的高执行率会将错误精准扩散至全文，造成更严重的系统性错误。
+      </div>
+    </div>
+
+    <div class="conclusion-item">
+      <span class="conclusion-num">目标③</span>
+      <div>
+        <strong>新方案在全部10篇中均优于旧方案，术语干预对翻译质量的正向影响明确、显著。</strong><br>
+        新方案平均质量评分8.77分，旧方案8.01分，提升0.76分，提升幅度在公共卫生（+1.7）、海洋生态（+0.9）、国际关系（+0.9）领域最为显著。质量提升主要来自<strong>术语一致性</strong>的改善——DS能系统性锁定旧方案因缺乏术语指导而产生的规范偏差（maritime/marine混淆、NDC缩写缺失、Disease X误译等）。同时，术语干预不会对译文流畅度产生负面影响（10篇用例均验证了这一点），说明新方案的整体质量收益是净正向的。<strong>例外场景</strong>：科技品牌篇（DS品牌词错误）和政治法律篇（文化隐喻词括号注释破坏文体）两篇提升效果受限，提示特殊场景需特殊策略。
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection" style="margin-top:32px;">
+    <div class="subsection-title">综合建议</div>
+    <div class="callout callout-info">
+      <p><strong>① 通用政策/学术/医学文稿</strong>：DS+EBLITE新方案可规模化落地，建议配套优化Prompt以降低过度抽取率；对高精度医学领域，重点解决Glossary Overriding问题（可尝试prompt强化"严格遵循术语表"指令）。</p>
+      <p><strong>② 企业品牌/产品文稿</strong>：引入企业知识库（Pre-defined Glossary）作为DS的上游输入，DS应仅负责提取、不负责翻译品牌词；知识库构建成本可通过一次性投入解决。</p>
+      <p><strong>③ 政治/法律文化负载词</strong>：DS的翻译策略应针对文体合规性做约束（如政策文本使用简洁对等词而非解释性括号注释），避免把翻译策略问题传递给EBLITE。</p>
+      <p><strong>④ 流程质检机制</strong>：建议在DS术语输出与EBLITE干预执行之间增加一层轻量级人工或规则审核，重点核查品牌词、人名和感知异常的高频通用词，将系统性风险前置拦截。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ 五、附录 ══════════ -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">五</span>
+    <span class="section-title">附录：10篇测试用例全量明细数据表</span>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>用例</th><th>领域</th>
+          <th>金标#</th><th>DS#</th><th>命中#</th><th>召回率</th><th>DS准确率</th>
+          <th>干预总数</th><th>成功干预#</th><th>干预成功率</th>
+          <th>新方案·术语一致性</th><th>新方案·语义准确性</th><th>新方案·语句流畅度</th><th>新方案·句式适配度</th><th>新方案·专业合规性</th><th>新方案总分</th>
+          <th>旧方案·术语一致性</th><th>旧方案·语义准确性</th><th>旧方案·语句流畅度</th><th>旧方案·句式适配度</th><th>旧方案·专业合规性</th><th>旧方案总分</th>
+          <th>提升幅度</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td><td>公共卫生</td>
+          <td class="num">14</td><td class="num">29</td><td class="num">12</td>
+          <td class="center"><span class="tag tag-orange">85.7%</span></td><td class="center"><span class="tag tag-red">41.4%</span></td>
+          <td class="num">29</td><td class="num">29</td><td class="center"><span class="tag tag-green">100%</span></td>
+          <td class="num">2.0</td><td class="num">1.8</td><td class="num">1.8</td><td class="num">1.8</td><td class="num">2.0</td><td class="num" style="color:var(--green);font-weight:700">9.4</td>
+          <td class="num">1.0</td><td class="num">1.7</td><td class="num">1.8</td><td class="num">1.7</td><td class="num">1.5</td><td class="num">7.7</td>
+          <td class="num" style="color:var(--accent);font-weight:700">+1.7</td>
+        </tr>
+        <tr>
+          <td>2</td><td>专业医学</td>
+          <td class="num">19</td><td class="num">29</td><td class="num">19</td>
+          <td class="center"><span class="tag tag-green">100%</span></td><td class="center"><span class="tag tag-orange">65.5%</span></td>
+          <td class="num">29</td><td class="num">26</td><td class="center"><span class="tag tag-orange">89.7%</span></td>
+          <td class="num">1.7</td><td class="num">1.8</td><td class="num">2.0</td><td class="num">1.8</td><td class="num">1.7</td><td class="num" style="color:var(--green);font-weight:700">9.0</td>
+          <td class="num">1.5</td><td class="num">1.7</td><td class="num">1.8</td><td class="num">1.7</td><td class="num">1.5</td><td class="num">8.2</td>
+          <td class="num" style="color:var(--accent);font-weight:700">+0.8</td>
+        </tr>
+        <tr>
+          <td>3</td><td>科技品牌</td>
+          <td class="num">16</td><td class="num">26</td><td class="num">15</td>
+          <td class="center"><span class="tag tag-green">93.8%</span></td><td class="center"><span class="tag tag-orange">80.8%</span></td>
+          <td class="num">26</td><td class="num">26</td><td class="center"><span class="tag tag-green">100%</span></td>
+          <td class="num">1.3</td><td class="num">1.7</td><td class="num">1.7</td><td class="num">1.7</td><td class="num">1.3</td><td class="num" style="color:var(--warn);font-weight:700">7.7</td>
+          <td class="num">1.0</td><td class="num">1.5</td><td class="num">1.7</td><td class="num">1.7</td><td class="num">1.3</td><td class="num">7.2</td>
+          <td class="num" style="color:var(--accent);font-weight:700">+0.5</td>
+        </tr>
+        <tr>
+          <td>4</td><td>航天政策</td>
+          <td class="num">10</td><td class="num">11</td><td class="num">10</td>
+          <td class="center"><span class="tag tag-green">100%</span></td><td class="center"><span class="tag tag-green">90.9%</span></td>
+          <td class="num">11</td><td class="num">10</td><td class="center"><span class="tag tag-green">91%</span></td>
+          <td class="num">1.8</td><td class="num">1.8</td><td class="num">1.8</td><td class="num">1.8</td><td class="num">1.9</td><td class="num" style="color:var(--green);font-weight:700">9.1</td>
+          <td class="num">1.5</td><td class="num">1.7</td><td class="num">1.7</td><td class="num">1.7</td><td class="num">1.7</td><td class="num">8.3</td>
+          <td class="num" style="color:var(--accent);font-weight:700">+0.8</td>
+        </tr>
+        <tr>
+          <td>5</td><td>网络治理</td>
+          <td class="num">9</td><td class="num">15</td><td class="num">9</td>
+          <td class="center"><span class="tag tag-green">100%</span></td><td class="center"><span class="tag tag-orange">60.0%</span></td>
+          <td class="num">15</td><td class="num">13</td><td class="center"><span class="tag tag-orange">87%</span></td>
+          <td class="num">1.6</td><td class="num">1.8</td><td class="num">1.8</td><td class="num">1.7</td><td class="num">1.7</td><td class="num" style="color:var(--green);font-weight:700">8.6</td>
+          <td class="num">1.5</td><td class="num">1.7</td><td class="num">1.7</td><td class="num">1.7</td><td class="num">1.6</td><td class="num">8.2</td>
+          <td class="num" style="color:var(--accent);font-weight:700">+0.4</td>
+        </tr>
+        <tr>
+          <td>6</td><td>海洋生态</td>
+          <td class="num">11</td><td class="num">18</td><td class="num">11</td>
+          <td class="center"><span class="tag tag-green">100%</span></td><td class="center"><span class="tag tag-orange">61.1%</span></td>
+          <td class="num">18</td><td class="num">16</td><td class="center"><span class="tag tag-orange">89%</span></td>
+          <td class="num">1.8</td><td class="num">1.8</td><td class="num">1.8</td><td class="num">1.8</td><td class="num">1.8</td><td class="num" style="color:var(--green);font-weight:700">9.0</td>
+          <td class="num">1.4</td><td class="num">1.7</td><td class="num">1.7</td><td class="num">1.7</td><td class="num">1.6</td><td class="num">8.1</td>
+          <td class="num" style="color:var(--accent);font-weight:700">+0.9</td>
+        </tr>
+        <tr>
+          <td>7</td><td>国际关系</td>
+          <td class="num">13</td><td class="num">19</td><td class="num">13</td>
+          <td class="center"><span class="tag tag-green">100%</span></td><td class="center"><span class="tag tag-orange">68.4%</span></td>
+          <td class="num">19</td><td class="num">17</td><td class="center"><span class="tag tag-orange">89%</span></td>
+          <td class="num">1.8</td><td class="num">1.8</td><td class="num">1.8</td><td class="num">1.7</td><td class="num">1.8</td><td class="num" style="color:var(--green);font-weight:700">8.9</td>
+          <td class="num">1.4</td><td class="num">1.7</td><td class="num">1.7</td><td class="num">1.7</td><td class="num">1.5</td><td class="num">8.0</td>
+          <td class="num" style="color:var(--accent);font-weight:700">+0.9</td>
+        </tr>
+        <tr>
+          <td>8</td><td>气候变化</td>
+          <td class="num">9</td><td class="num">13</td><td class="num">9</td>
+          <td class="center"><span class="tag tag-green">100%</span></td><td class="center"><span class="tag tag-orange">69.2%</span></td>
+          <td class="num">13</td><td class="num">11</td><td class="center"><span class="tag tag-orange">85%</span></td>
+          <td class="num">1.8</td><td class="num">1.8</td><td class="num">1.8</td><td class="num">1.7</td><td class="num">1.8</td><td class="num" style="color:var(--green);font-weight:700">8.9</td>
+          <td class="num">1.5</td><td class="num">1.7</td><td class="num">1.7</td><td class="num">1.7</td><td class="num">1.6</td><td class="num">8.2</td>
+          <td class="num" style="color:var(--accent);font-weight:700">+0.7</td>
+        </tr>
+        <tr>
+          <td>9</td><td>政治法律</td>
+          <td class="num">11</td><td class="num">12</td><td class="num">11</td>
+          <td class="center"><span class="tag tag-green">100%</span></td><td class="center"><span class="tag tag-green">91.7%</span></td>
+          <td class="num">12</td><td class="num">11</td><td class="center"><span class="tag tag-green">92%</span></td>
+          <td class="num">1.6</td><td class="num">1.7</td><td class="num">1.6</td><td class="num">1.5</td><td class="num">1.7</td><td class="num" style="color:var(--green);font-weight:700">8.1</td>
+          <td class="num">1.2</td><td class="num">1.6</td><td class="num">1.8</td><td class="num">1.7</td><td class="num">1.5</td><td class="num">7.8</td>
+          <td class="num" style="color:var(--accent);font-weight:700">+0.3</td>
+        </tr>
+        <tr>
+          <td>10</td><td>能源政策</td>
+          <td class="num">9</td><td class="num">14</td><td class="num">9</td>
+          <td class="center"><span class="tag tag-green">100%</span></td><td class="center"><span class="tag tag-orange">64.3%</span></td>
+          <td class="num">14</td><td class="num">12</td><td class="center"><span class="tag tag-orange">86%</span></td>
+          <td class="num">1.8</td><td class="num">1.8</td><td class="num">1.8</td><td class="num">1.8</td><td class="num">1.8</td><td class="num" style="color:var(--green);font-weight:700">9.0</td>
+          <td class="num">1.6</td><td class="num">1.7</td><td class="num">1.7</td><td class="num">1.7</td><td class="num">1.7</td><td class="num">8.4</td>
+          <td class="num" style="color:var(--accent);font-weight:700">+0.6</td>
+        </tr>
+        <tr style="background:#eaf0fb;font-weight:700;">
+          <td colspan="2"><strong>整体均值</strong></td>
+          <td class="num">12.1</td><td class="num">18.6</td><td class="num">11.8</td>
+          <td class="center"><strong>97.9%</strong></td><td class="center"><strong>69.3%</strong></td>
+          <td class="num">18.6</td><td class="num">16.9</td><td class="center"><strong>90.9%</strong></td>
+          <td class="num">1.72</td><td class="num">1.78</td><td class="num">1.79</td><td class="num">1.75</td><td class="num">1.73</td><td class="num" style="color:var(--green)"><strong>8.77</strong></td>
+          <td class="num">1.36</td><td class="num">1.66</td><td class="num">1.74</td><td class="num">1.71</td><td class="num">1.55</td><td class="num"><strong>8.01</strong></td>
+          <td class="num" style="color:var(--accent)"><strong>+0.76</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout callout-info" style="margin-top:24px;">
+    <div class="callout-title">附注：评分方法说明</div>
+    <p>译文质量评分采用10分制，共5个维度各满分2分：<strong>术语一致性</strong>（与参考译文的专业术语统一度）、<strong>语义准确性</strong>（与原文核心语义贴合度）、<strong>语句流畅度</strong>（目标语母语表达自然度）、<strong>句式适配度</strong>（文体风格与句式逻辑契合度）、<strong>专业合规性</strong>（对应领域行业规范符合度）。所有评分以黄金标准参考译文为唯一基准。</p>
+  </div>
+</div>
+
+<div class="footer">
+  <span>大模型翻译场景术语使用效果专项调研报告 · V1.0</span>
+  <span>测试用例：10篇 · 领域：跨行业 · 语言方向：ZH→EN · 模型：DeepSeek3.2 + EBLITE</span>
+</div>
+
+</div><!-- /body-wrap -->
+</body>
+</html>
